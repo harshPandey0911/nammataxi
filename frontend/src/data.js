@@ -9,6 +9,7 @@ export const cabs = [
 ];
 
 export const services = [
+    { id: 'local', name: 'Local City Ride', img: serviceTours },
     { id: 'airport', name: 'Airport Transfer', img: serviceAirport },
     { id: 'tours', name: 'Tours Packages', img: serviceTours },
     { id: 'outstation', name: 'Outstation', img: serviceOutstation }

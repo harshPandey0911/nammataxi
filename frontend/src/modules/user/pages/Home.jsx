@@ -1,10 +1,12 @@
 import React from 'react';
+import SEO from '../components/SEO';
 import Header from '../components/Header';
 import Hero from '../components/Hero';
 import ServiceGrid from '../components/ServiceGrid';
 import AirportForm from '../components/AirportForm';
 import ToursForm from '../components/ToursForm';
 import OutstationForm from '../components/OutstationForm';
+import LocalForm from '../components/LocalForm';
 import Banners from '../components/Banners';
 import heroTaxi from '../../../assets/hero_taxi.png';
 import { services } from '../../../data';
@@ -34,6 +36,7 @@ const Home = ({
 }) => {
     return (
         <div className="animate-slide-up">
+            <SEO pageName="user" />
             <Header />
             <Hero heroTaxi={heroTaxi} />
             
@@ -45,6 +48,21 @@ const Home = ({
 
             <div className="px-4">
                 <div className="booking-form">
+                    {activeService === 'local' && (
+                        <LocalForm 
+                            location={location}
+                            setLocation={setLocation}
+                            dropLocation={dropLocation}
+                            setDropLocation={setDropLocation}
+                            pickupDate={pickupDate}
+                            setPickupDate={setPickupDate}
+                            pickupTime={pickupTime}
+                            setPickupTime={setPickupTime}
+                            phoneNumber={phoneNumber}
+                            setPhoneNumber={setPhoneNumber}
+                            setView={handleSearch}
+                        />
+                    )}
                     {activeService === 'airport' && (
                         <AirportForm 
                             airportMode={airportMode}

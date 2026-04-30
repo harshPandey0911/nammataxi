@@ -1,20 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, Download, Eye, Trash2, CheckCircle, XCircle, Clock, ChevronDown, Bell, Calendar, Sparkles } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import api from '../../../../lib/api';
 import SmartDispatchPicker from '../../components/SmartDispatchPicker';
 import BookingAuditModal from '../../components/BookingAuditModal';
 import CreateSupportCaseModal from '../../components/CreateSupportCaseModal';
 import { Shield } from 'lucide-react';
 
-const AllBookings = ({ title = "All Bookings", filterStatus = null }) => {
+const AllBookings = ({ title: propTitle = "All Bookings", filterStatus: propFilterStatus = null }) => {
+    const location = useLocation();
     const [bookings, setBookings] = useState([]);
     const [drivers, setDrivers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
-    const [range, setRange] = useState('upcoming');
+    const [range, setRange] = useState('all');
     const [auditBookingId, setAuditBookingId] = useState(null);
     const [showCreateCase, setShowCreateCase] = useState(false);
     const [selectedBookingForCase, setSelectedBookingForCase] = useState(null);
+
+    // Determine section from path
+    const getSectionConfig = () => {
+        const path = location.pathname;
+        if (path.endsWith('/new')) return { title: "New Bookings", status: "new", desc: "Incoming requests pending confirmation" };
+        if (path.endsWith('/today')) return { title: "Today's Bookings", range: "today", desc: "All rides scheduled for today" };
+        if (path.endsWith('/cancelled')) return { title: "Cancelled Bookings", status: "cancelled", desc: "History of cancelled ride requests" };
+        if (path.endsWith('/completed')) return { title: "Completed Bookings", status: "completed", desc: "Successfully finished trips" };
+        if (path.endsWith('/running')) return { title: "Running Bookings", status: "assigned,enroute,arrived,started", desc: "Trips currently in progress" };
+        if (path.endsWith('/online')) return { title: "Online Bookings", paymentMethod: "online", desc: "Bookings paid via online channels" };
+        if (path.endsWith('/offline')) return { title: "Offline Bookings", paymentMethod: "cash", desc: "Bookings with cash payment" };
+        if (path.endsWith('/advanced')) return { title: "Advanced Bookings", range: "advanced", desc: "Future scheduled rides (from tomorrow onwards)" };
+        if (path.endsWith('/free-vehicles')) return { title: "Unassigned Bookings", range: "unassigned", desc: "Confirmed rides waiting for driver dispatch" };
+        return { title: propTitle, status: propFilterStatus, desc: "Master log of all ride requests" };
+    };
+
+    const section = getSectionConfig();
 
     const STATUS_FLOW = {
         'new': ['confirmed', 'cancelled'],
@@ -30,8 +49,21 @@ const AllBookings = ({ title = "All Bookings", filterStatus = null }) => {
     const fetchData = async (isSilent = false) => {
         try {
             if (!isSilent) setLoading(true);
+            
+            let queryParams = new URLSearchParams();
+            if (searchTerm) queryParams.append('search', searchTerm);
+            
+            // Use section specific filters or the default range state
+            if (section.status) queryParams.append('status', section.status);
+            if (section.paymentMethod) queryParams.append('paymentMethod', section.paymentMethod);
+            
+            const activeRange = section.range || range;
+            if (activeRange && activeRange !== 'all') {
+                queryParams.append('range', activeRange);
+            }
+
             const [bookingsRes, driversRes] = await Promise.all([
-                api.get(`/bookings?range=${range}&search=${searchTerm}`),
+                api.get(`/bookings?${queryParams.toString()}`),
                 api.get('/drivers?isActive=true&status=available')
             ]);
             
@@ -49,7 +81,7 @@ const AllBookings = ({ title = "All Bookings", filterStatus = null }) => {
         // Polling for updates every 30 seconds
         const interval = setInterval(() => fetchData(true), 30000);
         return () => clearInterval(interval);
-    }, [range, searchTerm]);
+    }, [range, searchTerm, location.pathname]);
 
     const updateStatus = async (id, newStatus) => {
         try {
@@ -94,10 +126,7 @@ const AllBookings = ({ title = "All Bookings", filterStatus = null }) => {
     };
 
     // Filter and search logic
-    const filteredBookings = bookings.filter(b => {
-        if (filterStatus && b.status !== filterStatus) return false;
-        return true;
-    });
+    const filteredBookings = bookings; // Filtering now handled by API
 
     const getStatusColor = (status) => {
         switch (status) {
@@ -131,8 +160,8 @@ const AllBookings = ({ title = "All Bookings", filterStatus = null }) => {
             {/* Page Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-8 rounded-[2rem] border border-black/5 shadow-sm">
                 <div>
-                    <h1 className="text-2xl font-serif font-black text-black tracking-tight uppercase">{title}</h1>
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Master log of all ride requests</p>
+                    <h1 className="text-2xl font-serif font-black text-black tracking-tight uppercase">{section.title}</h1>
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">{section.desc}</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <button 

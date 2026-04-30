@@ -119,6 +119,16 @@ export async function getAllBookings(filters = {}) {
       { 'customerInfo.phone': { $regex: search, $options: 'i' } }
     ];
   }
+
+  // Handle multiple statuses if provided as comma-separated string
+  if (restFilters.status && typeof restFilters.status === 'string' && restFilters.status.includes(',')) {
+    matchQuery.status = { $in: restFilters.status.split(',') };
+  }
+
+  // Handle multiple payment methods if provided as comma-separated string
+  if (restFilters.paymentMethod && typeof restFilters.paymentMethod === 'string' && restFilters.paymentMethod.includes(',')) {
+    matchQuery.paymentMethod = { $in: restFilters.paymentMethod.split(',') };
+  }
   
   // Date-based grouping
   if (range === 'today') {
@@ -132,6 +142,12 @@ export async function getAllBookings(filters = {}) {
   } else if (range === 'upcoming') {
     const today = now.toISOString().split('T')[0];
     matchQuery['tripSummary.pickupDate'] = { $gte: today };
+    matchQuery.status = { $nin: ['completed', 'cancelled'] };
+  } else if (range === 'advanced') {
+    const tomorrowDate = new Date(now);
+    tomorrowDate.setDate(now.getDate() + 1);
+    const tomorrow = tomorrowDate.toISOString().split('T')[0];
+    matchQuery['tripSummary.pickupDate'] = { $gte: tomorrow };
     matchQuery.status = { $nin: ['completed', 'cancelled'] };
   } else if (range === 'unassigned') {
     matchQuery.status = 'confirmed';

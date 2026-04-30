@@ -338,6 +338,17 @@ const Staff = () => {
                             </div>
 
                             <div className="space-y-0.5">
+                                <label className="text-[7px] font-black text-gray-400 uppercase tracking-widest ml-0.5 text-left block">Communication Link (Phone)</label>
+                                <input 
+                                    required type="tel" 
+                                    className="w-full px-2 py-1.5 border border-gray-100 focus:outline-none focus:border-black text-[10px] font-black bg-gray-50/30 uppercase tracking-tighter"
+                                    placeholder="PHONE_NUMBER"
+                                    value={formData.phone}
+                                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                                />
+                            </div>
+
+                            <div className="space-y-0.5">
                                 <label className="text-[7px] font-black text-gray-400 uppercase tracking-widest ml-0.5 text-left block">Station Location</label>
                                 <textarea 
                                     className="w-full px-2 py-1.5 border border-gray-100 focus:outline-none focus:border-black text-[10px] font-black min-h-[40px] uppercase leading-tight"

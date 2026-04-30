@@ -4,6 +4,9 @@ import { protect, authorize } from '../../middleware/auth.js';
 
 const router = Router();
 
+// Public route for user-side to get SEO by page
+router.get('/page/:page', seoController.getSeoByPage);
+
 // Only admins can manage SEO settings
 router.use(protect, authorize('admin'));
 

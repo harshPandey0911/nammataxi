@@ -39,11 +39,9 @@ import alertRoutes from './alerts.routes.js';
 import uploadRoutes from './upload.routes.js';
 import emailTemplatesRoutes from './email-templates.routes.js';
 import bannersRoutes from './banners.routes.js';
+import postRoutes from './posts.routes.js';
 
 const router = Router();
-
-router.use('/email-templates', emailTemplatesRoutes);
-router.use('/banners', bannersRoutes);
 
 // ── API info endpoint ─────────────────────────────────────────────────────────
 router.get('/', (_req, res) => {
@@ -86,5 +84,8 @@ router.use('/support', supportRoutes);
 router.use('/alerts', alertRoutes);
 router.use('/upload', uploadRoutes);
 router.use('/coupons', couponsRoutes);
+router.use('/email-templates', emailTemplatesRoutes);
+router.use('/banners', bannersRoutes);
+router.use('/posts', postRoutes);
 
 export default router;

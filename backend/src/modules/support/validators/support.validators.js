@@ -25,4 +25,5 @@ export const listCasesValidator = [
     query('status').optional().isIn(['open', 'in_progress', 'waiting_customer', 'resolved', 'closed']),
     query('priority').optional().isIn(['low', 'medium', 'high', 'urgent']),
     query('range').optional().isIn(['today', '7d', '30d', 'all']),
+    query('search').optional().trim(),
 ];

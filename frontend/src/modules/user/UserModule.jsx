@@ -45,6 +45,49 @@ function UserModule() {
   const [cabResults, setCabResults] = useState([])
   const [isRazorpayLoaded, setIsRazorpayLoaded] = useState(false)
 
+  // Coupon States
+  const [couponCode, setCouponCode] = useState('')
+  const [appliedCoupon, setAppliedCoupon] = useState(null)
+  const [discountAmount, setDiscountAmount] = useState(0)
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false)
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    
+    try {
+      setIsApplyingCoupon(true);
+      const fare = parseInt(selectedCab.price.replace('₹', ''));
+      const res = await api.post('/coupons/validate', { 
+        code: couponCode, 
+        orderValue: fare 
+      });
+
+      if (res && res.data) {
+        const coupon = res.data;
+        let discount = 0;
+        if (coupon.type === 'percentage') {
+          discount = Math.floor((fare * coupon.value) / 100);
+          if (coupon.maxDiscount && discount > coupon.maxDiscount) {
+            discount = coupon.maxDiscount;
+          }
+        } else {
+          discount = coupon.value;
+        }
+
+        setAppliedCoupon(coupon);
+        setDiscountAmount(discount);
+        alert(`Coupon Applied! You saved ₹${discount}`);
+      }
+    } catch (err) {
+      console.error('Coupon error:', err);
+      alert(err.response?.data?.message || 'Invalid coupon code');
+      setAppliedCoupon(null);
+      setDiscountAmount(0);
+    } finally {
+      setIsApplyingCoupon(false);
+    }
+  };
+
   useEffect(() => {
     // Load Razorpay script
     const script = document.createElement('script');
@@ -60,8 +103,8 @@ function UserModule() {
           const { latitude, longitude } = position.coords;
           try {
             // Reverse geocode using Google Maps API
-            // Note: Using the key provided in .env (exposed via Vite)
-            const apiKey = 'AIzaSyCcpTFWJP9pT_LcliCyFb_LbIo4xRxBloE';
+            // Use environment variable for Google Maps API Key
+            const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
             const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`);
             const data = await response.json();
             
@@ -89,7 +132,7 @@ function UserModule() {
   const handleSearch = async () => {
     try {
       // Validation for distance-based services
-      if (activeService === 'airport' || activeService === 'outstation') {
+      if (activeService === 'airport' || activeService === 'outstation' || activeService === 'local') {
         if (!location || location === 'Fetching live location...') {
           alert('Please enter a pickup location');
           return;
@@ -105,6 +148,7 @@ function UserModule() {
       
       const tripMode = activeService === 'airport' ? airportMode : 
                        activeService === 'outstation' ? outstationMode : 
+                       activeService === 'local' ? 'city_ride' :
                        (selectedPackage || '1day_450km_arunachalam')
 
       const quoteData = {
@@ -168,6 +212,7 @@ function UserModule() {
       const bookingData = {
         quoteId,
         categoryId: selectedCab.id,
+        couponCode: appliedCoupon?.code || null,
         customerInfo: {
           name: userName || 'Guest User',
           phone: phoneNumber || '9999999999',
@@ -212,6 +257,10 @@ function UserModule() {
                 ...selectedCab,
                 bookingRef: bookingRef
               })
+              // Reset coupon states
+              setAppliedCoupon(null);
+              setCouponCode('');
+              setDiscountAmount(0);
               navigate('/user/success')
             }
           } catch (err) {
@@ -314,6 +363,12 @@ function UserModule() {
             setUserAddress={setUserAddress}
             handleBookClick={handleBookClick}
             isCheckingAvailability={isCheckingAvailability}
+            couponCode={couponCode}
+            setCouponCode={setCouponCode}
+            appliedCoupon={appliedCoupon}
+            discountAmount={discountAmount}
+            handleApplyCoupon={handleApplyCoupon}
+            isApplyingCoupon={isApplyingCoupon}
           />
         } />
 

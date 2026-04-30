@@ -1,5 +1,5 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import SEO from '../components/SEO';
 import heroTaxi from '../../../assets/hero_taxi.png';
 
 const LandingPage = () => {
@@ -7,6 +7,7 @@ const LandingPage = () => {
 
     return (
         <div className="min-h-screen bg-white font-sans overflow-x-hidden">
+            <SEO pageName="home" />
             {/* Navbar */}
             <nav className="flex justify-between items-center px-6 py-5 absolute top-0 w-full z-50">
                 <div className="flex items-center gap-2">

@@ -25,6 +25,9 @@ import AlertManagement from './pages/AlertManagement';
 
 // Additional Pages
 import CouponListPage from './pages/CouponListPage';
+import DiscountCouponPage from './pages/DiscountCouponPage';
+import CouponFormPage from './pages/CouponFormPage';
+import BlogManagement from './pages/BlogManagement';
 import PlaceholderPage from './pages/PlaceholderPage';
 
 function AdminModule() {
@@ -59,8 +62,14 @@ function AdminModule() {
 
                 {/* Additional Sidebar Routes */}
                 <Route path="coupons/list" element={<CouponListPage />} />
+                <Route path="coupons/discounts" element={<DiscountCouponPage />} />
+                <Route path="coupons/add" element={<CouponFormPage />} />
+                <Route path="coupons/edit/:id" element={<CouponFormPage />} />
                 <Route path="coupons/*" element={<PlaceholderPage />} />
-                <Route path="posts/*" element={<PlaceholderPage />} />
+                <Route path="posts" element={<BlogManagement />} />
+                <Route path="posts/nammataxi" element={<BlogManagement defaultCategory="NAMMATAXI" />} />
+                <Route path="posts/airport-taxi" element={<BlogManagement defaultCategory="AIRPORTTAXISERVICE" />} />
+                <Route path="posts/*" element={<BlogManagement />} />
                 <Route path="bangalore-taxi/*" element={<PlaceholderPage />} />
                 <Route path="search-histories/*" element={<PlaceholderPage />} />
 

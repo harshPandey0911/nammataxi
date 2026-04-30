@@ -30,3 +30,10 @@ export async function deleteSeo(req, res) {
     message: 'SEO settings deleted successfully',
   });
 }
+
+export async function getSeoByPage(req, res) {
+  const seo = await seoService.getSeoByPage(req.params.page);
+  return sendSuccess(res, {
+    data: seo,
+  });
+}

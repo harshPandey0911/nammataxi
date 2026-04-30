@@ -31,3 +31,7 @@ export async function deleteSeo(id) {
   }
   return seo;
 }
+
+export async function getSeoByPage(pageName) {
+  return SEO.findOne({ page: pageName });
+}

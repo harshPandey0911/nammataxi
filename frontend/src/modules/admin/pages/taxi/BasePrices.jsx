@@ -1,17 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { IndianRupee, Info, Edit, Check, X } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import api from '../../../../lib/api';
 
 const BasePrices = () => {
+    const location = useLocation();
     const [prices, setPrices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [editingId, setEditingId] = useState(null);
     const [editForm, setEditForm] = useState({});
 
+    // Map path to serviceType
+    const getSectionConfig = () => {
+        const path = location.pathname;
+        if (path.endsWith('/local')) return { type: 'local', title: 'Local Pricing', desc: 'Point-to-point city ride rates' };
+        if (path.endsWith('/airport')) return { type: 'airport', title: 'Airport Pricing', desc: 'Pickup and drop rates for Bengaluru Airport' };
+        if (path.endsWith('/out-station')) return { type: 'outstation', title: 'Out Station Pricing', desc: 'Inter-city travel rates and driver allowances' };
+        if (path.endsWith('/tours-package')) return { type: 'tours', title: 'Tours Packages', desc: 'Pre-defined sight-seeing and rental packages' };
+        return { type: null, title: 'All Base Pricing', desc: 'Configure standard fares and additional charges' };
+    };
+
+    const section = getSectionConfig();
+
     const fetchPrices = async () => {
         try {
             setLoading(true);
-            const res = await api.get('/pricing');
+            const query = section.type ? `?serviceType=${section.type}` : '';
+            const res = await api.get(`/pricing${query}`);
             if (res && res.data) {
                 setPrices(res.data);
             }
@@ -24,7 +39,7 @@ const BasePrices = () => {
 
     useEffect(() => {
         fetchPrices();
-    }, []);
+    }, [location.pathname]);
 
     const handleEditClick = (price) => {
         setEditingId(price._id);
@@ -58,8 +73,8 @@ const BasePrices = () => {
         <div className="space-y-6 animate-in fade-in duration-500 text-left font-outfit">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-8 rounded-[2rem] border border-black/5 shadow-sm">
                 <div>
-                    <h1 className="text-2xl font-serif font-black text-black tracking-tight uppercase">Base Pricing</h1>
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Configure standard fares and additional charges</p>
+                    <h1 className="text-2xl font-serif font-black text-black tracking-tight uppercase">{section.title}</h1>
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">{section.desc}</p>
                 </div>
                 <button 
                     onClick={fetchPrices}

@@ -98,7 +98,7 @@ const CouponFormPage = () => {
             } else {
                 await api.post('/coupons', formData);
             }
-            navigate('/admin/coupons');
+            navigate('/admin/coupons/list');
         } catch (error) {
             alert(error.response?.data?.message || 'Failed to save coupon');
         } finally {
@@ -126,7 +126,7 @@ const CouponFormPage = () => {
             <PageHeader
                 title={isEdit ? 'Configure Coupon' : 'New Promo Campaign'}
                 subtitle={isEdit ? `Modifying settings for ${formData.code}` : 'Design a new high-conversion discount code'}
-                backPath="/admin/coupons"
+                backPath="/admin/coupons/list"
                 action={handleSaveAction}
             />
 
