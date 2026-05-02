@@ -26,22 +26,22 @@ export const DateTimePicker = ({ dateValue, onDateChange, timeValue, onTimeChang
         <div className="relative flex-1">
             <input 
                 type="date" 
-                className="form-input w-full" 
+                className="form-input w-full pt-6 pb-2" 
                 value={dateValue} 
                 onChange={e => onDateChange(e.target.value)} 
             />
-            <span className="text-[8px] font-black text-primary uppercase absolute -top-1.5 left-3 bg-white px-1 z-10">
+            <span className="text-[8px] font-black text-primary uppercase absolute top-1.5 left-3 z-10">
                 {dateLabel}
             </span>
         </div>
         <div className="relative flex-1">
             <input 
                 type="time" 
-                className="form-input w-full" 
+                className="form-input w-full pt-6 pb-2" 
                 value={timeValue} 
                 onChange={e => onTimeChange(e.target.value)} 
             />
-            <span className="text-[8px] font-black text-primary uppercase absolute -top-1.5 left-3 bg-white px-1 z-10">
+            <span className="text-[8px] font-black text-primary uppercase absolute top-1.5 left-3 z-10">
                 {timeLabel}
             </span>
         </div>
