@@ -3,6 +3,7 @@ import config from './src/config/env.js';
 import { connectDB, disconnectDB } from './src/config/database.js';
 
 import Staff from './src/modules/staff/model/staff.model.js';
+import Driver from './src/modules/drivers/model/driver.model.js';
 import VehicleCategory from './src/modules/vehicle-categories/model/vehicleCategory.model.js';
 import Pricing from './src/modules/pricing/model/pricing.model.js';
 
@@ -17,6 +18,7 @@ async function seed() {
       await Staff.create({
         name: 'Admin User',
         email: 'admin@nammaxi.com',
+        phone: '9876543210',
         passwordHash: 'password123', // auto hashed by pre-save
         role: 'admin',
       });
@@ -192,6 +194,22 @@ async function seed() {
       perKmRate: 18,
       minimumKm: 5,
     });
+
+    // 4. Test Driver
+    const driverExists = await Driver.findOne({ phone: '9999999999' });
+    if (!driverExists) {
+      await Driver.create({
+        name: 'Test Driver',
+        phone: '9999999999',
+        passwordHash: '123456',
+        licenseNumber: 'DL-1234567890',
+        vehicleNumber: 'KA-01-AB-1234',
+        vehicleCategoryId: (await VehicleCategory.findOne({ name: 'Compact Sedan' }))._id,
+        status: 'available',
+        isActive: true,
+      });
+      console.log('Driver created: 9999999999 / 123456');
+    }
 
     console.log('Pricing seeded');
     console.log('Seed completed successfully!');
