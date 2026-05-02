@@ -19,6 +19,7 @@ const Drivers = () => {
         licenseNumber: '',
         vehicleNumber: '',
         vehicleCategoryId: '',
+        passwordHash: '',
         status: 'available',
         bankDetails: {
             accountHolderName: '',
@@ -292,6 +293,9 @@ const Drivers = () => {
                                     <input type="email" placeholder="Email (Optional)" className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:border-black text-sm" 
                                         value={showEditModal ? selectedDriver.email : newDriver.email} 
                                         onChange={e => showEditModal ? setSelectedDriver({...selectedDriver, email: e.target.value}) : setNewDriver({...newDriver, email: e.target.value})} />
+                                    <input type="password" placeholder="Login PIN / Password" className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:border-black text-sm" 
+                                        value={showEditModal ? selectedDriver.passwordHash : newDriver.passwordHash} 
+                                        onChange={e => showEditModal ? setSelectedDriver({...selectedDriver, passwordHash: e.target.value}) : setNewDriver({...newDriver, passwordHash: e.target.value})} />
                                 </div>
                                 
                                 <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 border-b border-gray-100 pb-2 pt-4">Vehicle & License</h4>
