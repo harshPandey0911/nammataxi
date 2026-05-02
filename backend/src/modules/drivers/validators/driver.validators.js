@@ -7,6 +7,7 @@ export const createDriverValidator = [
   body('vehicleNumber').notEmpty().withMessage('Vehicle number is required'),
   body('vehicleCategoryId').optional().isMongoId().withMessage('Invalid vehicle category ID'),
   body('email').optional().isEmail().withMessage('Invalid email'),
+  body('passwordHash').optional().notEmpty().withMessage('Password PIN is required'),
   body('profileImage').optional().isURL().withMessage('Invalid profile image URL'),
 ];
 
@@ -14,6 +15,7 @@ export const updateDriverValidator = [
   param('id').isMongoId().withMessage('Invalid driver ID'),
   body('name').optional().notEmpty().withMessage('Name cannot be empty'),
   body('phone').optional().notEmpty().withMessage('Phone cannot be empty'),
+  body('passwordHash').optional().notEmpty().withMessage('Password PIN cannot be empty'),
   body('status').optional().isIn(['available', 'busy', 'offline']).withMessage('Invalid status'),
   body('isActive').optional().isBoolean().withMessage('isActive must be a boolean'),
   body('profileImage').optional().isURL().withMessage('Invalid profile image URL'),
