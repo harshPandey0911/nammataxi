@@ -52,7 +52,7 @@ const LoginPage = () => {
                 {/* Branding */}
                 {/* Branding */}
                 <div className="flex flex-col items-center justify-center mb-6 text-center">
-                    <h1 className="text-2xl font-serif font-black text-white tracking-widest uppercase mb-2">
+                    <h1 className="text-2xl font-serif font-black text-gray-900 tracking-widest uppercase mb-2">
                         NAMMA <span className="text-primary italic">TAXI</span>
                     </h1>
                 </div>
@@ -62,7 +62,7 @@ const LoginPage = () => {
                         <div className="w-10 h-10 bg-primary/20 text-primary rounded-none flex items-center justify-center border border-primary/30">
                             <ShieldCheck size={20} strokeWidth={2.5} />
                         </div>
-                        <h2 className="text-xl font-serif font-black text-white uppercase tracking-widest italic">Verify Identity</h2>
+                        <h2 className="text-xl font-serif font-black text-gray-900 uppercase tracking-widest italic">Verify Identity</h2>
                     </div>
 
                     {error && (
@@ -78,7 +78,7 @@ const LoginPage = () => {
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="space-y-2">
-                            <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">Admin Email</label>
+                            <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest ml-1">Admin Email</label>
                             <div className="relative group">
                                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors" size={18} />
                                 <input
@@ -87,13 +87,13 @@ const LoginPage = () => {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder="admin@nammataxi.com"
-                                    className="w-full bg-white/5 border border-white/10 rounded-none py-4 pl-12 pr-4 text-sm font-bold text-white outline-none focus:bg-white/10 focus:border-primary transition-all placeholder:text-gray-600 font-outfit"
+                                    className="w-full bg-gray-100 border border-gray-200 rounded-none py-4 pl-12 pr-4 text-sm font-bold text-gray-900 outline-none focus:bg-white focus:border-primary transition-all placeholder:text-gray-400 font-outfit"
                                 />
                             </div>
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">Security Key</label>
+                            <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest ml-1">Security Key</label>
                             <div className="relative group">
                                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors" size={18} />
                                 <input
@@ -102,7 +102,7 @@ const LoginPage = () => {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     placeholder="••••••••"
-                                    className="w-full bg-white/5 border border-white/10 rounded-none py-4 pl-12 pr-12 text-sm font-bold text-white outline-none focus:bg-white/10 focus:border-primary transition-all placeholder:text-gray-600 font-outfit"
+                                    className="w-full bg-gray-100 border border-gray-200 rounded-none py-4 pl-12 pr-12 text-sm font-bold text-gray-900 outline-none focus:bg-white focus:border-primary transition-all placeholder:text-gray-400 font-outfit"
                                 />
                                 <button
                                     type="button"
