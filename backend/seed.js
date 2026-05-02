@@ -12,20 +12,21 @@ async function seed() {
     await connectDB();
     console.log('Connected to DB');
 
-    // 1. Admin User
-    const adminExists = await Staff.findOne({ email: 'admin@nammaxi.com' });
-    if (!adminExists) {
-      await Staff.create({
-        name: 'Admin User',
-        email: 'admin@nammaxi.com',
-        phone: '9876543210',
-        passwordHash: 'password123', // auto hashed by pre-save
-        role: 'admin',
-      });
-      console.log('Admin user created: admin@nammaxi.com / password123');
-    } else {
-      console.log('Admin already exists');
-    }
+    // 1. Clear existing data for a clean seed
+    console.log('Clearing existing staff/drivers...');
+    const staffDeleted = await Staff.deleteMany({ role: 'admin' });
+    const driversDeleted = await Driver.deleteMany({});
+    console.log(`Deleted ${staffDeleted.deletedCount} admins and ${driversDeleted.deletedCount} drivers`);
+
+    // 2. Admin User
+    await Staff.create({
+      name: 'Admin User',
+      email: 'admin@nammaxi.com',
+      phone: '9876543210',
+      passwordHash: 'password123', // auto hashed by pre-save
+      role: 'admin',
+    });
+    console.log('✅ Admin user re-created: admin@nammaxi.com / password123');
 
     // 2. Vehicle Categories
     await VehicleCategory.deleteMany({});
@@ -53,6 +54,7 @@ async function seed() {
       description: 'Highest rated sedan with maximum comfort and professional driver.',
       sortOrder: 2,
     });
+    const sedanCatId = catSedan._id;
 
     const catSuv = await VehicleCategory.create({
       name: 'SUV Luxury',
@@ -196,20 +198,17 @@ async function seed() {
     });
 
     // 4. Test Driver
-    const driverExists = await Driver.findOne({ phone: '9999999999' });
-    if (!driverExists) {
-      await Driver.create({
-        name: 'Test Driver',
-        phone: '9999999999',
-        passwordHash: '123456',
-        licenseNumber: 'DL-1234567890',
-        vehicleNumber: 'KA-01-AB-1234',
-        vehicleCategoryId: (await VehicleCategory.findOne({ name: 'Compact Sedan' }))._id,
-        status: 'available',
-        isActive: true,
-      });
-      console.log('Driver created: 9999999999 / 123456');
-    }
+    await Driver.create({
+      name: 'Test Driver',
+      phone: '9999999999',
+      passwordHash: '123456',
+      licenseNumber: 'DL-1234567890',
+      vehicleNumber: 'KA-01-AB-1234',
+      vehicleCategoryId: sedanCatId,
+      status: 'available',
+      isActive: true,
+    });
+    console.log('✅ Driver created: 9999999999 / 123456');
 
     console.log('Pricing seeded');
     console.log('Seed completed successfully!');
