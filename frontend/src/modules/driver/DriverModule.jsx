@@ -21,7 +21,7 @@ const DriverModule = () => {
     return (
       <Routes>
         <Route path="login" element={<DriverLogin />} />
-        <Route path="*" element={<Navigate to="login" replace />} />
+        <Route path="*" element={<Navigate to="/driver/login" replace />} />
       </Routes>
     );
   }
