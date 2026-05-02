@@ -16,6 +16,7 @@ const AllBookings = ({ title: propTitle = "All Bookings", filterStatus: propFilt
     const [searchTerm, setSearchTerm] = useState('');
     const [range, setRange] = useState('all');
     const [auditBookingId, setAuditBookingId] = useState(null);
+    const [showCreateCase, setShowCreateCase] = useState(false);
     const [selectedBookingForCase, setSelectedBookingForCase] = useState(null);
     const [activeDropdown, setActiveDropdown] = useState(null);
 
