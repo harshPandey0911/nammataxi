@@ -90,7 +90,6 @@ const DriverBookingDetail = () => {
 
     // Contextual Action Determination
     const getStatusInfo = () => {
-        console.log('Current Status:', booking.status); // Debug Log
         switch (booking.status) {
             case 'confirmed': 
             case 'assigned': return { next: 'enroute', label: 'Start Enroute', color: 'bg-black text-[#F7DC9D]', icon: <Navigation size={20} /> };
