@@ -101,6 +101,10 @@ const bookingSchema = new mongoose.Schema(
     startOTP: {
       type: String,
       default: () => Math.floor(1000 + Math.random() * 9000).toString(),
+    },
+    endOTP: {
+      type: String,
+      default: () => Math.floor(1000 + Math.random() * 9000).toString(),
     }
   },
   { timestamps: true }

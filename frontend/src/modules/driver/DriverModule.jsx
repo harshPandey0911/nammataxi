@@ -36,16 +36,16 @@ const DriverModule = () => {
           <span className="text-[8px] font-black uppercase tracking-[0.3em] opacity-40">Operational Portal</span>
         </div>
         <div className="flex items-center gap-4">
-            <div className="flex flex-col items-end">
-              <span className="text-[10px] font-black uppercase text-white leading-none mb-1">{user.name}</span>
-              <span className="text-[8px] font-bold text-[#F7DC9D] uppercase tracking-widest leading-none">Online</span>
-            </div>
-            <button onClick={() => logout()} className="p-2 bg-white/10 rounded-lg hover:bg-red-500 transition-colors">
-              <LogOut size={16} />
-            </button>
+          <div className="flex flex-col items-end">
+            <span className="text-[10px] font-black uppercase text-white leading-none mb-1">{user.name}</span>
+            <span className="text-[8px] font-bold text-[#F7DC9D] uppercase tracking-widest leading-none">Online</span>
+          </div>
+          <button onClick={() => logout()} className="p-2 bg-white/10 rounded-lg hover:bg-red-500 transition-colors">
+            <LogOut size={16} />
+          </button>
         </div>
       </nav>
-      
+
       {/* Main Content Area */}
       <div className="flex-1 p-4 pb-32">
         <Routes>
@@ -59,22 +59,22 @@ const DriverModule = () => {
 
       {/* Bottom Navigation (Floating Style) */}
       <div className="fixed bottom-6 left-6 right-6 z-[100]">
-          <div className="bg-black/90 backdrop-blur-xl border border-white/10 p-3 rounded-[2.5rem] flex justify-around items-center shadow-2xl">
-            <NavLink 
-              to="/driver/bookings" 
-              className={({ isActive }) => `flex flex-col items-center gap-1.5 transition-all px-8 py-2 rounded-2xl ${isActive ? 'bg-[#F7DC9D] text-black scale-105' : 'text-gray-500'}`}
-            >
-              <ClipboardList size={20} />
-              <span className="text-[8px] font-black uppercase tracking-widest">Rides</span>
-            </NavLink>
-            <NavLink 
-              to="/driver/earnings" 
-              className={({ isActive }) => `flex flex-col items-center gap-1.5 transition-all px-8 py-2 rounded-2xl ${isActive ? 'bg-[#F7DC9D] text-black scale-105' : 'text-gray-500'}`}
-            >
-              <Wallet size={20} />
-              <span className="text-[8px] font-black uppercase tracking-widest">Earnings</span>
-            </NavLink>
-          </div>
+        <div className="bg-black/90 backdrop-blur-xl border border-white/10 p-3 rounded-[2.5rem] flex justify-around items-center shadow-2xl">
+          <NavLink
+            to="/driver/bookings"
+            className={({ isActive }) => `flex flex-col items-center gap-1.5 transition-all px-8 py-2 rounded-2xl ${isActive ? 'bg-[#F7DC9D] text-black scale-105' : 'text-gray-500'}`}
+          >
+            <ClipboardList size={20} />
+            <span className="text-[8px] font-black uppercase tracking-widest">Rides</span>
+          </NavLink>
+          <NavLink
+            to="/driver/earnings"
+            className={({ isActive }) => `flex flex-col items-center gap-1.5 transition-all px-8 py-2 rounded-2xl ${isActive ? 'bg-[#F7DC9D] text-black scale-105' : 'text-gray-500'}`}
+          >
+            <Wallet size={20} />
+            <span className="text-[8px] font-black uppercase tracking-widest">Earnings</span>
+          </NavLink>
+        </div>
       </div>
     </div>
   );

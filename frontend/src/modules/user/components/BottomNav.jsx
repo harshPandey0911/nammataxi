@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { Home, Heart, ShoppingBag, Settings, Calendar } from 'lucide-react';
 
 const BottomNav = () => {
     const navigate = useNavigate();
@@ -7,39 +8,33 @@ const BottomNav = () => {
     const path = location.pathname;
 
     return (
-        <div className="floating-nav glass-dark shadow-[0_-20px_40px_rgba(0,0,0,0.1)]">
-            <button 
-                onClick={() => navigate('/user')} 
-                className={`nav-item ${path === '/user' ? 'active' : ''}`}
-            >
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-                </svg>
-            </button>
-            <button 
-                onClick={() => navigate('/user/bookings')}
-                className={`nav-item ${path === '/user/bookings' ? 'active' : ''}`}
-            >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                </svg>
-            </button>
-            <button 
-                onClick={() => navigate('/user/results')}
-                className={`nav-item ${path.includes('results') || path.includes('details') ? 'active' : ''}`}
-            >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                </svg>
-            </button>
-            <button 
-                onClick={() => navigate('/user/profile')}
-                className={`nav-item ${path.includes('profile') ? 'active' : ''}`}
-            >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-            </button>
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
+            <div className="bg-obsidian/95 backdrop-blur-xl px-8 py-4 rounded-full shadow-2xl shadow-black/40 flex items-center gap-10 border border-white/5">
+                <button 
+                    onClick={() => navigate('/user')} 
+                    className={`transition-all duration-300 ${path === '/user' ? 'text-white scale-110' : 'text-white/40 hover:text-white/60'}`}
+                >
+                    <Home size={22} strokeWidth={path === '/user' ? 2.5 : 2} />
+                </button>
+                <button 
+                    onClick={() => navigate('/user/bookings')}
+                    className={`transition-all duration-300 ${path === '/user/bookings' ? 'text-white scale-110' : 'text-white/40 hover:text-white/60'}`}
+                >
+                    <Calendar size={22} strokeWidth={path === '/user/bookings' ? 2.5 : 2} />
+                </button>
+                <button 
+                    onClick={() => navigate('/user/notifications')}
+                    className={`transition-all duration-300 ${path.includes('notifications') ? 'text-white scale-110' : 'text-white/40 hover:text-white/60'}`}
+                >
+                    <ShoppingBag size={22} strokeWidth={path.includes('notifications') ? 2.5 : 2} />
+                </button>
+                <button 
+                    onClick={() => navigate('/user/profile')}
+                    className={`transition-all duration-300 ${path.includes('profile') ? 'text-white scale-110' : 'text-white/40 hover:text-white/60'}`}
+                >
+                    <Settings size={22} strokeWidth={path.includes('profile') ? 2.5 : 2} />
+                </button>
+            </div>
         </div>
     );
 };

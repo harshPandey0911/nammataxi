@@ -76,10 +76,16 @@ const Bookings = () => {
                                     </span>
                                 )}
                             </div>
-                            {selectedBooking.startOTP && !['completed', 'cancelled'].includes(selectedBooking.status) && (
+                            {selectedBooking.startOTP && ['confirmed', 'assigned', 'enroute', 'arrived'].includes(selectedBooking.status) && (
                                 <div className="mt-4 bg-[#F7DC9D]/20 border border-[#F7DC9D]/30 rounded-2xl p-3 flex justify-between items-center">
                                     <span className="text-[10px] font-black text-black uppercase tracking-widest">Start OTP</span>
                                     <span className="text-lg font-black text-black tracking-[0.3em]">{selectedBooking.startOTP}</span>
+                                </div>
+                            )}
+                            {selectedBooking.endOTP && selectedBooking.status === 'started' && (
+                                <div className="mt-4 bg-[#BCE3E8]/20 border border-[#BCE3E8]/30 rounded-2xl p-3 flex justify-between items-center">
+                                    <span className="text-[10px] font-black text-black uppercase tracking-widest">End OTP</span>
+                                    <span className="text-lg font-black text-black tracking-[0.3em]">{selectedBooking.endOTP}</span>
                                 </div>
                             )}
                         </div>
@@ -91,7 +97,7 @@ const Bookings = () => {
                             }`}>
                                 {selectedBooking.status}
                             </span>
-                            {['new', 'confirmed', 'assigned', 'enroute', 'arrived'].includes(selectedBooking.status) && (
+                             {['new', 'confirmed', 'assigned', 'enroute', 'arrived', 'started'].includes(selectedBooking.status) && (
                                 <button 
                                     onClick={async () => {
                                         if (window.confirm('Are you sure you want to cancel this trip?')) {
@@ -103,7 +109,7 @@ const Bookings = () => {
                                             }
                                         }
                                     }}
-                                    className="text-[9px] font-black text-red-500 uppercase tracking-widest hover:underline"
+                                    className="mt-2 px-4 py-2 bg-red-50 text-red-500 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all border border-red-100"
                                 >
                                     Cancel Trip
                                 </button>

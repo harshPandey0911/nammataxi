@@ -94,13 +94,15 @@ const AllBookings = ({ title: propTitle = "All Bookings", filterStatus: propFilt
         fetchData();
         
         // Listen for real-time updates
-        const handleSocketUpdate = () => {
+        const handleSocketUpdate = (data) => {
+            console.log('Socket update received:', data);
             fetchData(true); // Silent refresh
         };
 
         socket.on('booking_created', handleSocketUpdate);
         socket.on('booking_updated', handleSocketUpdate);
         socket.on('booking_cancelled', handleSocketUpdate);
+        socket.on('driver_assigned', handleSocketUpdate);
 
         // Polling as a fallback every 30 seconds
         const interval = setInterval(() => fetchData(true), 30000);

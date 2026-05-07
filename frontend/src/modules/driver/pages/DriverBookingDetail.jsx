@@ -11,6 +11,7 @@ const DriverBookingDetail = () => {
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
     const [otp, setOtp] = useState('');
+    const [isOtpRequested, setIsOtpRequested] = useState(false);
 
     const fetchBooking = async () => {
         try {
@@ -44,10 +45,22 @@ const DriverBookingDetail = () => {
         };
     }, [id]);
 
+    useEffect(() => {
+        setIsOtpRequested(false);
+        setOtp('');
+    }, [booking?.status]);
+
     const handleStatusUpdate = async (nextStatus) => {
-        if (nextStatus === 'started' && (!otp || otp.length < 4)) {
-            alert('Please enter a valid 4-digit OTP provided by the customer.');
-            return;
+        // Both 'started' and 'completed' now require OTP verification
+        if (nextStatus === 'started' || nextStatus === 'completed') {
+            if (!isOtpRequested) {
+                setIsOtpRequested(true);
+                return;
+            }
+            if (!otp || otp.length < 4) {
+                alert(`Please enter the 4-digit ${nextStatus === 'started' ? 'START' : 'END'} OTP provided by the customer.`);
+                return;
+            }
         }
 
         if (!window.confirm(`Are you sure you want to mark this ride as ${nextStatus.toUpperCase()}?`)) return;
@@ -72,7 +85,7 @@ const DriverBookingDetail = () => {
 
     if (loading) return (
         <div className="flex flex-col items-center justify-center py-20 font-outfit">
-            <div className="w-12 h-12 border-[6px] border-[#F7DC9D]/20 border-t-black rounded-full animate-spin mb-6" />
+            <div className="w-12 h-12 border-[6px] border-[#BCE3E8]/20 border-t-black rounded-full animate-spin mb-6" />
             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Loading Job Details...</span>
         </div>
     );
@@ -92,10 +105,8 @@ const DriverBookingDetail = () => {
     const getStatusInfo = () => {
         switch (booking.status) {
             case 'confirmed': 
-            case 'assigned': return { next: 'enroute', label: 'Start Enroute', color: 'bg-black text-[#F7DC9D]', icon: <Navigation size={20} /> };
-            case 'enroute': return { next: 'arrived', label: 'Mark Arrived', color: 'bg-cyan-500 text-white', icon: <CheckCircle size={20} /> };
-            case 'arrived': return { next: 'started', label: 'Start Trip/OTP', color: 'bg-orange-500 text-white', icon: <ArrowRight size={20} /> };
-            case 'started': return { next: 'completed', label: 'Finish Ride', color: 'bg-emerald-500 text-white', icon: <Check size={24} /> };
+            case 'assigned': return { next: 'started', label: 'Reached Pickup', color: 'bg-black text-white', icon: <MapPin size={20} /> };
+            case 'started': return { next: 'completed', label: 'Work Complete', color: 'bg-emerald-500 text-white', icon: <Check size={24} /> };
             default: return null;
         }
     };
@@ -115,35 +126,38 @@ const DriverBookingDetail = () => {
                 <div className="flex-1">
                     <div className="flex items-center justify-between">
                         <h2 className="text-xl font-serif font-black uppercase leading-none">{booking.bookingRef}</h2>
-                        <span className="text-[8px] font-black bg-[#F7DC9D] text-black px-2 py-1 rounded-lg uppercase tracking-widest">{booking.status}</span>
+                        <span className="text-[8px] font-black bg-[#BCE3E8] text-black px-2 py-1 rounded-lg uppercase tracking-widest">{booking.status}</span>
                     </div>
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1 italic">Reference ID</p>
                 </div>
             </div>
 
             {/* STATUS CONTROL CENTER (THE ACTION PANEL) */}
-            <div className="bg-[#F7DC9D] p-6 rounded-[2.5rem] shadow-xl border-4 border-black/10">
-                <div className="flex justify-between items-center mb-6">
+            <div className="bg-[#BCE3E8] p-3 rounded-2xl shadow-md border border-black/5">
+                <div className="flex justify-between items-center mb-4">
                     <div className="flex flex-col">
-                        <span className="text-[10px] font-black text-black/40 uppercase tracking-widest leading-none mb-1">Operational Control</span>
-                        <h3 className="text-lg font-black text-black">Update Ride Status</h3>
+                        <span className="text-[8px] font-black text-black/40 uppercase tracking-widest leading-none mb-0.5">Control Panel</span>
+                        <h3 className="text-sm font-black text-black">Update Ride Status</h3>
                     </div>
-                    <div className="w-10 h-10 bg-black/10 rounded-full flex items-center justify-center">
-                        <Clock size={20} className="text-black/60" />
+                    <div className="w-8 h-8 bg-black/5 rounded-full flex items-center justify-center">
+                        <Clock size={16} className="text-black/60" />
                     </div>
                 </div>
                 
-                {nextAction?.next === 'started' && (
-                    <div className="mb-6 animate-in slide-in-from-top-4 duration-300">
-                        <div className="bg-black/5 rounded-3xl p-4 border-2 border-dashed border-black/10">
-                            <span className="text-[10px] font-black text-black/40 uppercase tracking-widest block mb-3 text-center">Ask Customer for Start OTP</span>
+                {(nextAction?.next === 'started' || nextAction?.next === 'completed') && isOtpRequested && (
+                    <div className="mb-4 animate-in zoom-in-95 duration-200">
+                        <div className="bg-white/40 rounded-xl p-2 border border-dashed border-black/10">
+                            <span className="text-[7px] font-black text-black/40 uppercase tracking-widest block mb-2 text-center">
+                                {nextAction?.next === 'started' ? 'Enter Start OTP' : 'Enter End OTP to Finish'}
+                            </span>
                             <input 
                                 type="text" 
                                 maxLength={4}
-                                placeholder="ENTER 4-DIGIT OTP"
+                                placeholder="0000"
                                 value={otp}
+                                autoFocus
                                 onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                                className="w-full bg-white py-4 rounded-2xl text-center text-2xl font-black tracking-[0.5em] text-black outline-none border-2 border-transparent focus:border-black transition-all placeholder:text-black/10 placeholder:tracking-normal placeholder:text-xs"
+                                className="w-full bg-white py-2 rounded-lg text-center text-xl font-black tracking-[0.5em] text-black outline-none border border-transparent focus:border-black transition-all"
                             />
                         </div>
                     </div>
@@ -153,18 +167,17 @@ const DriverBookingDetail = () => {
                     <button 
                         onClick={() => handleStatusUpdate(nextAction.next)}
                         disabled={actionLoading}
-                        className={`w-full flex items-center justify-between p-5 rounded-[2rem] shadow-lg active:scale-[0.98] transition-all border-2 border-white/20 ${nextAction.color}`}
+                        className={`w-full flex items-center justify-center p-2.5 rounded-full shadow-md active:scale-[0.98] transition-all border border-white/10 ${nextAction.color}`}
                     >
-                        <div className="flex items-center gap-4 pl-2">
-                            <div className="bg-white/20 p-2 rounded-xl">
-                                {nextAction.icon}
-                            </div>
-                            <span className="text-sm font-black uppercase tracking-wider">{nextAction.label}</span>
-                        </div>
                         {actionLoading ? (
-                            <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                         ) : (
-                            <ArrowRight size={20} className="mr-2" />
+                            <span className="text-[10px] font-black uppercase tracking-widest">
+                                {isOtpRequested 
+                                    ? (nextAction.next === 'started' ? 'Verify & Start' : 'Confirm & Finish') 
+                                    : nextAction.label
+                                }
+                            </span>
                         )}
                     </button>
                 ) : (
@@ -176,78 +189,61 @@ const DriverBookingDetail = () => {
             </div>
 
             {/* Customer Details Card */}
-            <div className="bg-white p-7 rounded-[2.5rem] border border-black/5 shadow-sm relative">
-                <div className="flex justify-between items-center mb-10">
-                    <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 bg-black text-[#F7DC9D] rounded-[1.5rem] flex items-center justify-center font-black text-2xl shadow-xl">
+            <div className="bg-white p-3 rounded-2xl border border-black/5 shadow-sm relative">
+                <div className="flex justify-between items-center mb-6">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-black text-[#BCE3E8] rounded-lg flex items-center justify-center font-black text-lg shadow-md">
                             {booking.customerInfo.name?.[0] || 'C'}
                         </div>
                         <div className="flex flex-col">
-                            <span className="text-sm font-black text-black uppercase block leading-none">{booking.customerInfo.name}</span>
-                            <span className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest mt-1.5 flex items-center gap-1">
-                                <ShieldCheck size={10} /> Verified Customer
+                            <span className="text-xs font-black text-black uppercase block leading-none">{booking.customerInfo.name}</span>
+                            <span className="text-[8px] font-bold text-emerald-500 uppercase tracking-widest mt-1 flex items-center gap-1">
+                                <ShieldCheck size={8} /> Verified
                             </span>
                         </div>
                     </div>
-                    <a href={`tel:${booking.customerInfo.phone}`} className="w-16 h-16 bg-emerald-500 text-white rounded-[1.5rem] flex items-center justify-center shadow-xl shadow-emerald-500/20 active:scale-95 transition-all">
-                        <Phone size={24} fill="currentColor" />
+                    <a href={`tel:${booking.customerInfo.phone}`} className="w-10 h-10 bg-emerald-500 text-white rounded-lg flex items-center justify-center shadow-md shadow-emerald-500/10 active:scale-95 transition-all">
+                        <Phone size={18} fill="currentColor" />
                     </a>
                 </div>
 
-                <div className="space-y-8">
+                <div className="space-y-4">
                     <div className="flex items-start gap-4">
                         <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-black border border-black/5">
                             <MapPin size={18} />
                         </div>
                         <div className="flex flex-col flex-1">
-                            <span className="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Pick-up Location</span>
-                            <span className="text-[13px] font-bold text-black leading-snug">{booking.tripSummary.pickupLocation}</span>
+                            <span className="text-[8px] font-black text-gray-400 uppercase tracking-[0.1em] mb-0.5">Pick-up</span>
+                            <span className="text-[11px] font-bold text-black leading-tight truncate">{booking.tripSummary.pickupLocation}</span>
                         </div>
                     </div>
-                    <div className="flex items-start gap-4 border-t border-gray-50 pt-8">
+                    <div className="flex items-start gap-4 border-t border-gray-50 pt-4">
                         <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-300 border border-black/5">
                             <Navigation size={18} />
                         </div>
                         <div className="flex flex-col flex-1">
-                            <span className="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Drop-off Location</span>
-                            <span className="text-[13px] font-bold text-black leading-snug">{booking.tripSummary.dropLocation || 'As directed by customer'}</span>
+                            <span className="text-[8px] font-black text-gray-400 uppercase tracking-[0.1em] mb-0.5">Drop-off</span>
+                            <span className="text-[11px] font-bold text-black leading-tight truncate">{booking.tripSummary.dropLocation || 'As directed'}</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* Fare Summary */}
-            <div className="bg-obsidian p-8 rounded-[2.5rem] text-white flex justify-between items-center shadow-2xl">
+            <div className="bg-black p-3 rounded-2xl text-white flex justify-between items-center shadow-md">
                 <div className="flex flex-col">
-                    <span className="text-[9px] font-black text-[#F7DC9D] uppercase tracking-[0.3em] block mb-2 opacity-60">Estimated Fare</span>
-                    <span className="text-3xl font-serif font-black">₹{booking.fareDetails.computedFare}</span>
+                    <span className="text-[8px] font-black text-[#BCE3E8] uppercase tracking-widest block mb-1 opacity-60">Estimated Fare</span>
+                    <span className="text-xl font-serif font-black">₹{booking.fareDetails.computedFare}</span>
                 </div>
                 <div className="text-right">
-                    <span className="text-[9px] font-black text-white uppercase tracking-widest block mb-2 opacity-40">Vehicle Type</span>
-                    <div className="px-5 py-2.5 bg-white/10 rounded-2xl border border-white/10">
-                        <span className="text-[10px] font-black text-[#F7DC9D] uppercase tracking-tighter">{booking.selectedVehicleCategory.name}</span>
+                    <span className="text-[8px] font-black text-white uppercase tracking-widest block mb-1 opacity-40">Vehicle</span>
+                    <div className="px-3 py-1 bg-white/10 rounded-lg border border-white/5">
+                        <span className="text-[9px] font-black text-[#BCE3E8] uppercase">{booking.selectedVehicleCategory.name}</span>
                     </div>
                 </div>
             </div>
 
-            {/* Quick Action FAB */}
-            {nextAction && (
-                <div className="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-gray-50 via-gray-50 to-transparent z-[1000]">
-                    <button 
-                        onClick={() => handleStatusUpdate(nextAction.next)}
-                        disabled={actionLoading}
-                        className={`w-full flex items-center justify-between p-6 rounded-[2.5rem] shadow-2xl active:scale-[0.98] transition-all border-4 border-white/20 ${nextAction.color}`}
-                    >
-                        <div className="flex flex-col items-start pl-4">
-                            <span className="text-[9px] font-black uppercase tracking-[0.3em] opacity-60 mb-0.5 text-left">Slide to Progress</span>
-                            <span className="text-sm font-black uppercase tracking-[0.1em]">{nextAction.label}</span>
-                        </div>
-                        <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-md">
-                            {actionLoading ? <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin" /> : <ArrowRight size={28} />}
-                        </div>
-                    </button>
-                </div>
-            )}
+            {/* Quick action button removed as it overlaps with bottom nav */}
         </div>
     );
 };

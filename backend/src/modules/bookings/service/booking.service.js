@@ -205,7 +205,10 @@ export async function getAllBookings(filters = {}) {
     }
   } else if (range === 'unassigned') {
     matchQuery.status = 'confirmed';
-    matchQuery['assignedDriver.driverId'] = { $exists: false };
+    matchQuery.$or = [
+      { 'assignedDriver.driverId': { $exists: false } },
+      { 'assignedDriver.driverId': null }
+    ];
   }
 
   // Admin only logic - Aggregate notification counts for each booking
@@ -246,9 +249,7 @@ export async function getAllBookings(filters = {}) {
 const VALID_TRANSITIONS = {
   'new': ['confirmed', 'cancelled'],
   'confirmed': ['assigned', 'cancelled'],
-  'assigned': ['enroute', 'cancelled'],
-  'enroute': ['arrived', 'cancelled'],
-  'arrived': ['started', 'cancelled'],
+  'assigned': ['started', 'cancelled'],
   'started': ['completed'],
   'completed': [],
   'cancelled': []
@@ -332,9 +333,11 @@ export async function assignDriver(bookingId, driverId) {
   const driver = await Driver.findById(driverId);
   if (!driver) throw AppError.notFound('Driver not found');
   
-  if (!driver.isActive || driver.status !== 'available') {
-    throw AppError.badRequest('Driver is not available for assignment');
+  if (!driver.isActive) {
+    throw AppError.badRequest('Driver is not active and cannot be assigned');
   }
+  // We now allow assigning even if busy, to allow scheduling multiple trips
+  // if (driver.status !== 'available') { ... }
 
   // 2. Handle old driver if reassignment
   const oldDriverId = booking.assignedDriver?.driverId;
@@ -505,20 +508,34 @@ export async function updateBookingStatusByDriver(bookingId, driverId, newStatus
   const booking = await Booking.findOne({ _id: bookingId, 'assignedDriver.driverId': driverId });
   if (!booking) throw AppError.notFound('Booking not found or not assigned to you');
 
-  // Verify OTP only for "started" status
+  // Verify Start OTP for "started" status
   if (newStatus === 'started') {
     if (!otp) {
       throw AppError.badRequest('Start OTP is required to begin the ride', 'OTP_REQUIRED');
     }
-    if (booking.startOTP !== otp) {
+    if (booking.startOTP.toString() !== otp.toString()) {
       throw AppError.badRequest('Invalid Start OTP. Please check with the customer.', 'INVALID_OTP');
     }
   }
 
+  // Verify End OTP for "completed" status
+  if (newStatus === 'completed') {
+    // Fallback: If for some reason endOTP is missing (older records), generate it now
+    if (!booking.endOTP) {
+      booking.endOTP = Math.floor(1000 + Math.random() * 9000).toString();
+      await booking.save();
+    }
+
+    if (!otp) {
+      throw AppError.badRequest('End OTP is required to finish the ride', 'OTP_REQUIRED');
+    }
+    if (booking.endOTP.toString() !== otp.toString()) {
+      throw AppError.badRequest(`Invalid End OTP. Please check with the customer.`, 'INVALID_OTP');
+    }
+  }
+
   const DRIVER_ALLOWED_TRANSITIONS = {
-    'assigned': ['enroute'],
-    'enroute': ['arrived'],
-    'arrived': ['started'],
+    'assigned': ['started'],
     'started': ['completed']
   };
 

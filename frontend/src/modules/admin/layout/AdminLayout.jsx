@@ -21,14 +21,14 @@ const AdminLayout = () => {
     }
 
     return (
-        <div className="bg-[#F4F4F4] min-h-screen flex font-outfit overflow-x-hidden">
+        <div className="bg-[#F4F4F4] h-screen flex font-outfit overflow-hidden">
             {/* Proper Full-Height Sidebar with state */}
             <AdminSidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
             
-            {/* Main Content Area - Flexible space */}
-            <div className="flex-1 flex flex-col min-h-screen min-w-0">
+            {/* Main Content Area - Flexible space with independent scroll */}
+            <div className="flex-1 flex flex-col h-screen min-w-0 overflow-y-auto">
                 <main className="flex-1 bg-white">
-                    <div className="min-h-full p-2 md:p-4">
+                    <div className="p-2 md:p-6">
                         <Outlet />
                     </div>
                 </main>

@@ -30,7 +30,7 @@ const DriverEarnings = () => {
 
     if (loading) return (
         <div className="flex flex-col items-center justify-center py-20 font-outfit">
-            <div className="w-8 h-8 border-4 border-[#F7DC9D] border-t-black rounded-full animate-spin mb-4" />
+            <div className="w-8 h-8 border-4 border-[#BCE3E8] border-t-black rounded-full animate-spin mb-4" />
             <span className="text-[10px] font-black uppercase tracking-widest">Updating Ledger...</span>
         </div>
     );
@@ -66,7 +66,7 @@ const DriverEarnings = () => {
 
             {/* Summary Cards */}
             <div className="grid grid-cols-2 gap-4">
-                <div className="bg-black p-6 rounded-[2.5rem] text-[#F7DC9D]">
+                <div className="bg-black p-6 rounded-[2.5rem] text-[#BCE3E8]">
                     <div className="flex items-center justify-between mb-4">
                         <Wallet size={18} />
                         <span className="text-[8px] font-black uppercase tracking-widest opacity-50">Pending</span>

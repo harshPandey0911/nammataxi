@@ -346,6 +346,8 @@ function UserModule() {
     }
   }
 
+  const [isBookingVisible, setIsBookingVisible] = useState(false)
+
   return (
     <div className="min-h-screen">
       <Routes>
@@ -373,6 +375,8 @@ function UserModule() {
             setReturnDate={setReturnDate}
             handleSearch={handleSearch}
             globalCategories={globalCategories}
+            isBookingVisible={isBookingVisible}
+            setIsBookingVisible={setIsBookingVisible}
           />
         } />
         
@@ -439,9 +443,9 @@ function UserModule() {
       </Routes>
 
       {/* Global Spacer */}
-      <div className="h-44"></div>
+      {!isBookingVisible && <div className="h-44"></div>}
 
-      <BottomNav />
+      {!isBookingVisible && <BottomNav />}
     </div>
   )
 }

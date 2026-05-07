@@ -59,7 +59,7 @@ const DriverBookings = () => {
 
             {loading ? (
                 <div className="flex flex-col items-center justify-center py-20 text-gray-300">
-                    <div className="w-8 h-8 border-4 border-[#F7DC9D] border-t-black rounded-full animate-spin mb-4" />
+                    <div className="w-8 h-8 border-4 border-[#BCE3E8] border-t-black rounded-full animate-spin mb-4" />
                     <span className="text-[10px] font-black uppercase tracking-widest">Updating Jobs...</span>
                 </div>
             ) : bookings.length === 0 ? (
@@ -73,12 +73,12 @@ const DriverBookings = () => {
                         <div 
                             key={booking._id} 
                             onClick={() => navigate(`/driver/booking/${booking._id}`)}
-                            className="bg-white p-6 rounded-[2rem] border border-black/5 shadow-sm active:scale-[0.98] transition-all cursor-pointer relative overflow-hidden group"
+                            className="bg-white p-4 rounded-[1.5rem] border border-black/5 shadow-sm active:scale-[0.98] transition-all cursor-pointer relative overflow-hidden group"
                         >
                             <div className="flex justify-between items-start mb-4">
                                 <div className="flex flex-col">
                                     <span className="text-xs font-black text-black uppercase tracking-wider">{booking.bookingRef}</span>
-                                    <span className="text-[10px] font-bold text-[#F7DC9D] uppercase tracking-tight mt-0.5">{booking.selectedVehicleCategory?.name}</span>
+                                    <span className="text-[10px] font-bold text-[#BCE3E8] uppercase tracking-tight mt-0.5">{booking.selectedVehicleCategory?.name}</span>
                                 </div>
                                 <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider border ${getStatusColor(booking.status)}`}>
                                     {booking.status}
@@ -104,7 +104,7 @@ const DriverBookings = () => {
 
                             <div className="mt-4 pt-4 border-t border-black/5 flex justify-between items-center">
                                 <span className="text-sm font-serif font-black text-black">₹{booking.fareDetails.computedFare}</span>
-                                <div className="flex items-center gap-1 text-[#F7DC9D] group-hover:text-black transition-colors">
+                                <div className="flex items-center gap-1 text-[#BCE3E8] group-hover:text-black transition-colors">
                                     <span className="text-[10px] font-black uppercase tracking-widest">Open Job</span>
                                     <ChevronRight size={14} />
                                 </div>
@@ -112,20 +112,13 @@ const DriverBookings = () => {
                             
                             {/* Visual indicator for new jobs */}
                             {booking.status === 'assigned' && (
-                                <div className="absolute top-0 left-0 w-1 h-full bg-[#F7DC9D]" />
+                                <div className="absolute top-0 left-0 w-1 h-full bg-[#BCE3E8]" />
                             )}
                         </div>
                     ))}
                 </div>
             )}
 
-            {/* Refresh FAB */}
-            <button 
-                onClick={fetchBookings}
-                className="fixed bottom-6 right-6 p-4 bg-black text-[#F7DC9D] rounded-2xl shadow-2xl active:scale-90 transition-all z-50 border-2 border-[#F7DC9D]/20"
-            >
-                <Clock size={20} className={loading ? 'animate-spin' : ''} />
-            </button>
         </div>
     );
 };

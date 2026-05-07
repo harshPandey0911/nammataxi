@@ -60,7 +60,10 @@ class ApiClient {
       }
     }
     
-    if (token) headers['Authorization'] = `Bearer ${token}`;
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+      console.log(`[API] Injecting ${tokenKey} for ${path}`);
+    }
 
     const response = await fetch(url, {
       ...options,
@@ -79,7 +82,7 @@ class ApiClient {
     if (!response.ok) {
       // Global Session Expiration Handler
       if (response.status === 401) {
-        console.warn('Session expired or unauthorized. Clearing credentials.');
+        console.warn(`[API] 401 Unauthorized for ${path}. Path: ${pathname}`);
         localStorage.removeItem('customer_token');
         localStorage.removeItem('admin_token');
         localStorage.removeItem('driver_token');
@@ -90,7 +93,7 @@ class ApiClient {
           // Redirect based on context
           if (pathname.startsWith('/admin')) window.location.href = '/admin/login';
           else if (pathname.startsWith('/driver')) window.location.href = '/driver/login';
-          else window.location.href = '/user'; // For customers
+          else window.location.href = '/user/login'; // Redirect to login
         }
       }
 

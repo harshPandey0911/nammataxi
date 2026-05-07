@@ -19,7 +19,7 @@ const Profile = () => {
     ];
 
     return (
-        <div className="animate-slide-up px-6 pt-6">
+        <div className="animate-slide-up px-6 pt-12 pb-32">
             <h1 className="text-2xl font-black mb-8">My Profile</h1>
             
             <div className="flex items-center gap-4 mb-10 bg-white p-6 rounded-[32px] shadow-sm">
