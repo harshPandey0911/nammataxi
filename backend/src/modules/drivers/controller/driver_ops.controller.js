@@ -27,3 +27,13 @@ export async function updateBookingStatus(req, res) {
     data: booking,
   });
 }
+
+export async function respondToAssignment(req, res) {
+  const driverId = req.user.userId;
+  const { action } = req.body;
+  const booking = await bookingService.respondToAssignment(req.params.id, driverId, action);
+  return sendSuccess(res, {
+    message: `Booking assignment ${action}ed successfully`,
+    data: booking,
+  });
+}

@@ -116,6 +116,23 @@ export async function cancelBooking(req, res) {
   });
 }
 
+export async function respondToAssignment(req, res) {
+  const { action } = req.body;
+  const booking = await bookingService.respondToAssignment(req.params.id, req.user.userId, action);
+  return sendSuccess(res, {
+    message: `Booking assignment ${action}ed successfully`,
+    data: booking,
+  });
+}
+
+export async function getDriverBookings(req, res) {
+  const bookings = await bookingService.getDriverBookings(req.user.userId);
+  return sendSuccess(res, {
+    message: 'Driver bookings retrieved',
+    data: bookings,
+  });
+}
+
 export async function getDashboardStats(req, res) {
   const stats = await bookingService.getDashboardStats();
   return sendSuccess(res, {
