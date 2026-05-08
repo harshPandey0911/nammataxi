@@ -6,6 +6,9 @@ const VehicleAttachments = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [attachments, setAttachments] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [uploadingId, setUploadingId] = useState(null);
+    const fileInputRef = React.useRef(null);
+    const [selectedCategoryId, setSelectedCategoryId] = useState(null);
     
     const fetchAttachments = async () => {
         try {
@@ -18,6 +21,53 @@ const VehicleAttachments = () => {
             console.error('Failed to fetch vehicle attachments:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleImageClick = (categoryId) => {
+        setSelectedCategoryId(categoryId);
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file || !selectedCategoryId) return;
+
+        try {
+            setUploadingId(selectedCategoryId);
+            const formData = new FormData();
+            formData.append('image', file);
+            
+            // 1. Upload the image
+            const uploadRes = await api.post('/upload/image', formData);
+            if (uploadRes && uploadRes.data) {
+                const imageUrl = uploadRes.data.url;
+                
+                // 2. Update the vehicle category
+                await api.patch(`/vehicle-categories/${selectedCategoryId}`, { image: imageUrl });
+                
+                // 3. Refresh the list to show new image
+                fetchAttachments();
+                alert('Image updated successfully!');
+            }
+        } catch (error) {
+            console.error('Upload failed:', error);
+            alert('Failed to upload image');
+        } finally {
+            setUploadingId(null);
+            setSelectedCategoryId(null);
+            e.target.value = ''; // Reset input
+        }
+    };
+
+    const handleDelete = async (id) => {
+        if (!window.confirm('Are you sure you want to remove this vehicle attachment?')) return;
+        try {
+            await api.delete(`/drivers/${id}`);
+            setAttachments(prev => prev.filter(item => item._id !== id));
+        } catch (error) {
+            console.error('Failed to delete vehicle attachment:', error);
+            alert('Failed to delete');
         }
     };
 
@@ -89,7 +139,8 @@ const VehicleAttachments = () => {
                             <th className="px-4 py-4 text-left text-[11px] font-black text-black uppercase tracking-widest border-r border-gray-200">Partner Details</th>
                             <th className="px-4 py-4 text-left text-[11px] font-black text-black uppercase tracking-widest border-r border-gray-200">License & Auth</th>
                             <th className="px-4 py-4 text-left text-[11px] font-black text-black uppercase tracking-widest border-r border-gray-200">Status</th>
-                            <th className="px-4 py-4 text-left text-[11px] font-black text-black uppercase tracking-widest">Onboarding</th>
+                            <th className="px-4 py-4 text-left text-[11px] font-black text-black uppercase tracking-widest border-r border-gray-200">Onboarding</th>
+                            <th className="px-4 py-4 text-left text-[11px] font-black text-black uppercase tracking-widest">Action</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
@@ -111,8 +162,22 @@ const VehicleAttachments = () => {
                                 <td className="px-4 py-4 text-[12px] font-black text-gray-400 border-r border-gray-200">{index + 1}</td>
                                 <td className="px-4 py-4 border-r border-gray-200">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center group-hover:bg-[#F7DC9D]/20 transition-colors shrink-0 border border-black/5">
-                                            <Car size={24} className="text-black group-hover:text-amber-600 transition-colors" />
+                                        <div 
+                                            onClick={() => item.vehicleCategoryId?._id && handleImageClick(item.vehicleCategoryId._id)}
+                                            className={`w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center group-hover:bg-[#F7DC9D]/20 transition-colors shrink-0 border border-black/5 overflow-hidden cursor-pointer relative
+                                                ${uploadingId === item.vehicleCategoryId?._id ? 'opacity-50' : ''}`}
+                                        >
+                                            {uploadingId === item.vehicleCategoryId?._id ? (
+                                                <Loader2 className="animate-spin text-black" size={20} />
+                                            ) : item.vehicleCategoryId?.image ? (
+                                                <img 
+                                                    src={item.vehicleCategoryId.image} 
+                                                    alt={item.vehicleCategoryId.name} 
+                                                    className="w-full h-full object-contain p-1"
+                                                />
+                                            ) : (
+                                                <Car size={24} className="text-black group-hover:text-amber-600 transition-colors" />
+                                            )}
                                         </div>
                                         <div>
                                             <p className="text-[12px] font-black text-black uppercase tracking-tight">
@@ -152,17 +217,34 @@ const VehicleAttachments = () => {
                                     </span>
                                     <p className="text-[8px] font-black text-gray-400 uppercase mt-1">Status: {item.status}</p>
                                 </td>
-                                <td className="px-4 py-4">
+                                <td className="px-4 py-4 border-r border-gray-200">
                                     <p className="text-[11px] font-black text-gray-500 uppercase">
                                         {new Date(item.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
                                     </p>
                                     <p className="text-[9px] font-bold text-gray-400 uppercase mt-0.5">Fleet Onboarded</p>
+                                </td>
+                                <td className="px-4 py-4">
+                                    <button 
+                                        onClick={() => handleDelete(item._id)}
+                                        className="px-3 py-1.5 bg-red-50 text-red-600 text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-red-600 hover:text-white transition-all border border-red-100"
+                                    >
+                                        Delete
+                                    </button>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
+
+            {/* Hidden File Input for Image Upload */}
+                                        <input 
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                className="hidden"
+                accept="image/*"
+            />
 
             {/* Footer Copyright */}
             <div className="mt-12 text-center text-[10px] font-bold text-gray-400 py-6 border-t border-gray-100 uppercase tracking-[0.4em]">
