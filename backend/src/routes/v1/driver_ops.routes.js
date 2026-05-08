@@ -15,6 +15,7 @@ router.use(protect, authorize('driver'));
 router.get('/bookings', asyncHandler(driverOpsController.getDriverBookings));
 router.get('/bookings/:id', driverValidators.driverBookingQueryValidator, validate, asyncHandler(driverOpsController.getDriverBookingDetail));
 router.patch('/bookings/:id/status', driverValidators.driverUpdateStatusValidator, validate, asyncHandler(driverOpsController.updateBookingStatus));
+router.post('/bookings/:id/respond', asyncHandler(driverOpsController.respondToAssignment));
 router.get('/earnings', earningController.getMyEarnings);
 
 export default router;
