@@ -402,7 +402,19 @@ export async function assignDriver(bookingId, driverId) {
   }).catch(err => console.error('Notification failed:', err));
 
   emitGlobal('booking_updated', booking);
-  emitGlobal('driver_assigned', { bookingId: booking._id, driverId: driver._id });
+  
+  // Emit specifically to the assigned driver's room
+  const { emitToRoom } = await import('../../../utils/socket.js');
+  const roomId = driver._id.toString();
+  console.log(`[BookingService] Emitting driver_assigned to room: ${roomId} for booking: ${booking.bookingRef}`);
+  
+  emitToRoom(roomId, 'driver_assigned', { 
+    bookingId: booking._id, 
+    driverId: driver._id,
+    pickupLocation: booking.tripSummary.pickupLocation,
+    amount: booking.fareDetails.computedFare,
+    bookingRef: booking.bookingRef
+  });
 
   return booking;
 }
@@ -496,6 +508,45 @@ export async function cancelBooking(id, authContext = {}, reason = 'Customer can
 
 export async function getDriverBookings(driverId) {
   return Booking.find({ 'assignedDriver.driverId': driverId }).sort({ createdAt: -1 });
+}
+
+export async function respondToAssignment(bookingId, driverId, action) {
+  const Driver = (await import('../../drivers/model/driver.model.js')).default;
+  const booking = await Booking.findById(bookingId);
+  
+  if (!booking) throw AppError.notFound('Booking not found');
+  if (!booking.assignedDriver || booking.assignedDriver.driverId.toString() !== driverId.toString()) {
+    throw AppError.badRequest('This booking is not assigned to you');
+  }
+
+  if (action === 'accept') {
+    booking.statusHistory.push({
+      status: booking.status,
+      timestamp: new Date(),
+      note: 'Driver accepted the assignment',
+      updatedBy: driverId,
+      updatedByModel: 'Driver'
+    });
+    await booking.save();
+  } else if (action === 'reject') {
+    // Revert to confirmed and clear driver
+    booking.status = 'confirmed';
+    booking.assignedDriver = null;
+    booking.statusHistory.push({
+      status: 'confirmed',
+      timestamp: new Date(),
+      note: 'Driver rejected the assignment',
+      updatedBy: driverId,
+      updatedByModel: 'Driver'
+    });
+    
+    // Make driver available again
+    await Driver.findByIdAndUpdate(driverId, { status: 'available' });
+    await booking.save();
+  }
+
+  emitGlobal('booking_updated', booking);
+  return booking;
 }
 
 export async function getDriverBookingById(bookingId, driverId) {

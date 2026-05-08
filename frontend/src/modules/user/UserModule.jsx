@@ -35,7 +35,7 @@ function UserModule() {
   const [dropLocation, setDropLocation] = useState('')
   const [pickupDate, setPickupDate] = useState('')
   const [pickupTime, setPickupTime] = useState('')
-  const [phoneNumber, setPhoneNumber] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState(user?.phone || '')
   const [selectedPackage, setSelectedPackage] = useState('')
   const [outstationMode, setOutstationMode] = useState('oneway')
   const [returnDate, setReturnDate] = useState('')
@@ -172,6 +172,14 @@ function UserModule() {
           alert('Please enter a destination');
           return;
         }
+        if (!pickupDate) {
+          alert('Please select a pickup date');
+          return;
+        }
+        if (!pickupTime) {
+          alert('Please select a pickup time');
+          return;
+        }
       }
 
       // setIsLoadingResults(true)
@@ -254,15 +262,32 @@ function UserModule() {
         return;
       }
 
+      // Mandatory field validation
+      if (!userName || userName.trim().length < 3) {
+        alert('Please enter your full name');
+        setIsCheckingAvailability(false);
+        return;
+      }
+      if (!userEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userEmail)) {
+        alert('Please enter a valid email address');
+        setIsCheckingAvailability(false);
+        return;
+      }
+      if (!userAddress || userAddress.trim().length < 5) {
+        alert('Please enter your complete address for pickup');
+        setIsCheckingAvailability(false);
+        return;
+      }
+
       const bookingData = {
         quoteId,
         categoryId: selectedCab._id || selectedCab.id,
         couponCode: appliedCoupon?.code || null,
         customerInfo: {
-          name: userName || 'Guest User',
-          phone: phoneNumber || '9999999999',
-          email: userEmail || 'guest@example.com',
-          address: userAddress || 'Bengaluru'
+          name: userName.trim(),
+          phone: phoneNumber,
+          email: userEmail.trim(),
+          address: userAddress.trim()
         }
       }
 
@@ -354,6 +379,7 @@ function UserModule() {
       <Routes>
         <Route index element={<CustomerProtectedRoute>
           <Home 
+            user={user}
             activeService={activeService}
             setActiveService={setActiveService}
             airportMode={airportMode}
@@ -409,6 +435,7 @@ function UserModule() {
             userEmail={userEmail}
             setUserEmail={setUserEmail}
             phoneNumber={phoneNumber}
+            setPhoneNumber={setPhoneNumber}
             userAddress={userAddress}
             setUserAddress={setUserAddress}
             handleBookClick={handleBookClick}
