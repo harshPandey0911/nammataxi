@@ -19,10 +19,10 @@ const Profile = () => {
     ];
 
     return (
-        <div className="animate-slide-up px-6 pt-12 pb-32">
+        <div className="animate-slide-up px-6 pt-6 pb-20">
             <h1 className="text-2xl font-black mb-8">My Profile</h1>
             
-            <div className="flex items-center gap-4 mb-10 bg-white p-6 rounded-[32px] shadow-sm">
+            <div className="flex items-center gap-4 mb-8 bg-white p-6 rounded-[32px] shadow-sm">
                 <div className="w-16 h-16 rounded-full bg-primary/20 border-2 border-white shadow-sm flex items-center justify-center text-primary font-black text-xl uppercase overflow-hidden">
                     {customer.profileImage ? (
                         <img src={customer.profileImage} alt="Profile" className="w-full h-full object-cover" />
@@ -37,7 +37,7 @@ const Profile = () => {
                 </div>
             </div>
 
-            <div className="space-y-3 mb-10">
+            <div className="space-y-3 mb-8">
                 <h3 className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Account Settings</h3>
                 <div className="bg-white rounded-[32px] overflow-hidden shadow-sm">
                     {menuItems.map((item, index) => (
@@ -69,7 +69,7 @@ const Profile = () => {
                 </div>
             </div>
 
-            <div className="bg-obsidian rounded-[32px] p-6 text-white mb-32">
+            <div className="bg-obsidian rounded-[32px] p-6 text-white mb-10">
                 <h4 className="text-[10px] font-black uppercase tracking-widest opacity-50 mb-4">Contact Information</h4>
                 <div className="space-y-4">
                     <div className="flex gap-4">

@@ -80,17 +80,29 @@ const BlogManagement = ({ defaultCategory = 'All' }) => {
 
     const handleSave = async (e) => {
         if (e) e.preventDefault();
+        
+        // Basic validation
+        if (!formData.title || !formData.image || !formData.excerpt || !formData.content) {
+            alert('Please fill all required fields: Title, Image, Excerpt, and Content.');
+            return;
+        }
+
         try {
             setSaving(true);
+            console.log('[BlogManagement] Saving post:', formData);
+            
             if (formData._id) {
                 await api.patch(`/posts/${formData._id}`, formData);
             } else {
                 await api.post('/posts', formData);
             }
+            
             setIsEditing(false);
             fetchPosts();
         } catch (error) {
-            alert(error.response?.data?.message || 'Failed to save post');
+            console.error('[BlogManagement] Save failed:', error);
+            const errorMsg = error.data?.message || error.message || 'Failed to save post';
+            alert(errorMsg);
         } finally {
             setSaving(false);
         }
