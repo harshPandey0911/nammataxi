@@ -105,52 +105,7 @@ const Drivers = () => {
         d.vehicleNumber.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const BankDetailsForm = ({ data, setData }) => (
-        <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 space-y-3">
-            <h4 className="text-[10px] font-black text-black uppercase tracking-widest flex items-center gap-2">
-                <Banknote size={12} /> Payout Bank Details
-            </h4>
-            <div className="grid grid-cols-2 gap-3">
-                <div className="col-span-2">
-                    <input 
-                        type="text" 
-                        placeholder="Account Holder Name" 
-                        className="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs"
-                        value={data.bankDetails.accountHolderName}
-                        onChange={e => setData({...data, bankDetails: {...data.bankDetails, accountHolderName: e.target.value}})}
-                    />
-                </div>
-                <input 
-                    type="text" 
-                    placeholder="Account Number" 
-                    className="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs"
-                    value={data.bankDetails.accountNumber}
-                    onChange={e => setData({...data, bankDetails: {...data.bankDetails, accountNumber: e.target.value}})}
-                />
-                <input 
-                    type="text" 
-                    placeholder="IFSC Code" 
-                    className="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs"
-                    value={data.bankDetails.ifscCode}
-                    onChange={e => setData({...data, bankDetails: {...data.bankDetails, ifscCode: e.target.value}})}
-                />
-                <input 
-                    type="text" 
-                    placeholder="Bank Name" 
-                    className="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs"
-                    value={data.bankDetails.bankName}
-                    onChange={e => setData({...data, bankDetails: {...data.bankDetails, bankName: e.target.value}})}
-                />
-                <input 
-                    type="text" 
-                    placeholder="UPI ID (Optional)" 
-                    className="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs"
-                    value={data.bankDetails.upiId}
-                    onChange={e => setData({...data, bankDetails: {...data.bankDetails, upiId: e.target.value}})}
-                />
-            </div>
-        </div>
-    );
+
 
     return (
         <div className="p-1 md:p-3 bg-white min-h-screen font-inter animate-in fade-in duration-500">
@@ -278,22 +233,30 @@ const Drivers = () => {
                             </button>
                         </div>
                         
-                        <form onSubmit={showEditModal ? handleEditDriver : handleAddDriver} className="p-8 space-y-6 overflow-y-auto">
+                        <form 
+                            onSubmit={showEditModal ? handleEditDriver : handleAddDriver} 
+                            className="p-8 space-y-6 overflow-y-auto"
+                            autoComplete="off"
+                        >
                             <div className="space-y-4">
                                 <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 border-b border-gray-100 pb-2">Basic Information</h4>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="col-span-2">
                                         <input required type="text" placeholder="Full Name" className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:border-black text-sm" 
+                                            autoComplete="off"
                                             value={showEditModal ? selectedDriver.name : newDriver.name} 
                                             onChange={e => showEditModal ? setSelectedDriver({...selectedDriver, name: e.target.value}) : setNewDriver({...newDriver, name: e.target.value})} />
                                     </div>
                                     <input required type="text" placeholder="Phone Number" className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:border-black text-sm" 
+                                        autoComplete="off"
                                         value={showEditModal ? selectedDriver.phone : newDriver.phone} 
                                         onChange={e => showEditModal ? setSelectedDriver({...selectedDriver, phone: e.target.value}) : setNewDriver({...newDriver, phone: e.target.value})} />
                                     <input type="email" placeholder="Email (Optional)" className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:border-black text-sm" 
+                                        autoComplete="off"
                                         value={showEditModal ? selectedDriver.email : newDriver.email} 
                                         onChange={e => showEditModal ? setSelectedDriver({...selectedDriver, email: e.target.value}) : setNewDriver({...newDriver, email: e.target.value})} />
                                     <input required={!showEditModal} type="password" placeholder="Login PIN / Password" className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:border-black text-sm" 
+                                        autoComplete="new-password"
                                         value={showEditModal ? selectedDriver.passwordHash : newDriver.passwordHash} 
                                         onChange={e => showEditModal ? setSelectedDriver({...selectedDriver, passwordHash: e.target.value}) : setNewDriver({...newDriver, passwordHash: e.target.value})} />
                                 </div>
@@ -441,6 +404,63 @@ const DriverEarningsModal = ({ driver, onClose }) => {
                         Close Audit
                     </button>
                 </div>
+            </div>
+        </div>
+    );
+};
+
+const BankDetailsForm = ({ data, setData }) => {
+    const bankDetails = data?.bankDetails || {
+        accountHolderName: '',
+        accountNumber: '',
+        ifscCode: '',
+        bankName: '',
+        upiId: ''
+    };
+
+    return (
+        <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 space-y-3">
+            <h4 className="text-[10px] font-black text-black uppercase tracking-widest flex items-center gap-2">
+                <Banknote size={12} /> Payout Bank Details
+            </h4>
+            <div className="grid grid-cols-2 gap-3">
+                <div className="col-span-2">
+                    <input 
+                        type="text" 
+                        placeholder="Account Holder Name" 
+                        className="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs"
+                        value={bankDetails.accountHolderName}
+                        onChange={e => setData({...data, bankDetails: {...bankDetails, accountHolderName: e.target.value}})}
+                    />
+                </div>
+                <input 
+                    type="text" 
+                    placeholder="Account Number" 
+                    className="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs"
+                    value={bankDetails.accountNumber}
+                    onChange={e => setData({...data, bankDetails: {...bankDetails, accountNumber: e.target.value}})}
+                />
+                <input 
+                    type="text" 
+                    placeholder="IFSC Code" 
+                    className="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs"
+                    value={bankDetails.ifscCode}
+                    onChange={e => setData({...data, bankDetails: {...bankDetails, ifscCode: e.target.value}})}
+                />
+                <input 
+                    type="text" 
+                    placeholder="Bank Name" 
+                    className="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs"
+                    value={bankDetails.bankName}
+                    onChange={e => setData({...data, bankDetails: {...bankDetails, bankName: e.target.value}})}
+                />
+                <input 
+                    type="text" 
+                    placeholder="UPI ID (Optional)" 
+                    className="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs"
+                    value={bankDetails.upiId}
+                    onChange={e => setData({...data, bankDetails: {...bankDetails, upiId: e.target.value}})}
+                />
             </div>
         </div>
     );

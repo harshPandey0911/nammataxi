@@ -15,7 +15,7 @@ const ServiceGrid = ({ services, activeService, setActiveService }) => {
                         className={`service-card flex flex-col items-center justify-center text-center ${activeService === service.id ? 'active shadow-lg' : ''}`}
                     >
                         <img src={service.img} alt={service.name} className="w-10 h-auto mb-1" />
-                        <span className="text-[8px] font-black uppercase tracking-tighter leading-[1]">{service.name}</span>
+                        <span className="text-[9px] font-black uppercase tracking-tight leading-[1.2] w-full break-words">{service.name}</span>
                     </div>
                 ))}
             </div>

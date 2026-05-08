@@ -8,6 +8,7 @@ const CheckoutForm = ({
     userEmail, 
     setUserEmail, 
     phoneNumber, 
+    setPhoneNumber,
     userAddress, 
     setUserAddress, 
     handleBookClick, 
@@ -66,7 +67,7 @@ const CheckoutForm = ({
                     className="form-input" 
                     placeholder="Phone Number" 
                     value={phoneNumber} 
-                    readOnly 
+                    onChange={e => setPhoneNumber(e.target.value)}
                 />
                 <textarea 
                     className="form-input min-h-[100px]" 
@@ -109,8 +110,8 @@ const CheckoutForm = ({
 
                 <button 
                     onClick={handleBookClick} 
-                    disabled={isCheckingAvailability} 
-                    className={`primary-btn ${isCheckingAvailability ? 'opacity-50' : ''}`}
+                    disabled={isCheckingAvailability || !userName.trim() || !userEmail.trim() || !userAddress.trim() || !phoneNumber.trim()} 
+                    className={`primary-btn ${(isCheckingAvailability || !userName.trim() || !userEmail.trim() || !userAddress.trim() || !phoneNumber.trim()) ? 'opacity-50' : ''}`}
                 >
                     {isCheckingAvailability ? 'Checking Availability...' : 'Confirm Booking'}
                 </button>
