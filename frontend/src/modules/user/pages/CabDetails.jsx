@@ -116,7 +116,7 @@ const CabDetails = ({ selectedCab, setView, location, dropLocation, pickupDate, 
                 </div>
                 <button 
                     onClick={() => setView('checkout')} 
-                    className="bg-primary text-obsidian font-black px-8 py-4 rounded-2xl shadow-xl active:scale-95 transition-all"
+                    className="bg-primary text-white font-black px-8 py-4 rounded-2xl shadow-xl active:scale-95 transition-all"
                 >
                     Book
                 </button>

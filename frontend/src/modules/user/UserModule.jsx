@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Routes, Route, useNavigate } from 'react-router-dom'
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import { imageMap } from '../../data'
 import api from '../../lib/api'
 import { useAuth } from '../../context/AuthContext'
@@ -25,6 +25,7 @@ import CustomerLogin from './components/CustomerLogin'
 
 function UserModule() {
   const navigate = useNavigate()
+  const urlLocation = useLocation()
   const { user } = useAuth()
   
   // Home Form States
@@ -351,7 +352,7 @@ function UserModule() {
   return (
     <div className="min-h-screen">
       <Routes>
-        <Route index element={
+        <Route index element={<CustomerProtectedRoute>
           <Home 
             activeService={activeService}
             setActiveService={setActiveService}
@@ -378,7 +379,7 @@ function UserModule() {
             isBookingVisible={isBookingVisible}
             setIsBookingVisible={setIsBookingVisible}
           />
-        } />
+        </CustomerProtectedRoute>} />
         
         <Route path="results" element={
           <CabResults 
@@ -443,9 +444,9 @@ function UserModule() {
       </Routes>
 
       {/* Global Spacer */}
-      {!isBookingVisible && <div className="h-44"></div>}
+      {!isBookingVisible && urlLocation.pathname !== '/user/login' && <div className="h-44"></div>}
 
-      {!isBookingVisible && <BottomNav />}
+      {!isBookingVisible && urlLocation.pathname !== '/user/login' && <BottomNav />}
     </div>
   )
 }

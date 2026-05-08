@@ -49,7 +49,7 @@ const CabResults = ({ cabs, setView, setSelectedCab }) => {
                         </p>
                         <button 
                             onClick={() => setView('home')}
-                            className="w-full bg-primary text-obsidian font-black py-4 rounded-2xl shadow-lg active:scale-95 transition-transform uppercase text-xs tracking-widest"
+                            className="w-full bg-primary text-white font-black py-4 rounded-2xl shadow-lg active:scale-95 transition-transform uppercase text-xs tracking-widest"
                         >
                             Search Again
                         </button>
